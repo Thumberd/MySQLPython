@@ -1,5 +1,5 @@
 # MySQLhandler.py
-# Jérémy Albrecht
+# Jeremy Albrecht
 # 31/01/2016
 # ajeremyalbrecht@gmail.com / @jeremyy_a
 
@@ -22,7 +22,7 @@ class MySQL:
         self.connection = pymysql.connect(host='localhost',
                                      user='root',
                                      password='',
-                                     db='db',
+                                     db='',
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
         with self.connection.cursor() as cursor:
@@ -94,6 +94,21 @@ class MySQL:
                 isValid = false
             i = i + 1   #Increment dbInfo->Type to choose
         return isValid
+
+    def all(self):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "SELECT * FROM `" + self.db +"`"
+                numberOfResult = cursor.execute(sql)
+                if numberOfResult > 1:
+                    result = []
+                    for j in range(0, numberOfResult):
+                        result.append(cursor.fetchone())
+                    return result
+                else:
+                    return cursor.fetchone()
+        except pymysql.err.InternalError as e:
+            print(e)
 
     def add(self, data):
         #Add data to the DB
@@ -259,9 +274,4 @@ class MySQL:
     def close(self):
         self.connection.close()
 
-m = MySQL('db_name')
-# m.add(['Other name', '25'])
-# print(m.get('code', '2548'))
-# m.remove(3)
-# m.modify("3", 'name', 'Other name')
-m.close()
+
